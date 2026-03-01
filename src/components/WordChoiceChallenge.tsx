@@ -17,9 +17,11 @@ export const WordChoiceChallenge = ({ textWithBlanks, choices, correctChoice, on
   const parts = textWithBlanks.split('[CHOICE]');
 
   useEffect(() => {
-    setAvailableChoices(choices);
-    setSelected(null);
-  }, [choices]);
+    if (!disabled) {
+      setAvailableChoices(choices);
+      setSelected(null);
+    }
+  }, [choices, disabled]);
 
   const handleChoice = (choice: string) => {
     if (disabled) return;

@@ -3,6 +3,8 @@ import { LearningFrame, Option } from '../types';
 import { FillInBlankChallenge } from './FillInBlankChallenge';
 import { WordChoiceChallenge } from './WordChoiceChallenge';
 import { MatchingChallenge } from './MatchingChallenge';
+import { SortingChallenge } from './SortingChallenge';
+import { CategorizationChallenge } from './CategorizationChallenge';
 
 interface Props {
   frame: LearningFrame;
@@ -27,7 +29,7 @@ export const ChallengeEngine = ({
 
   return (
     <div className="space-y-6 mt-8">
-      {frame.type !== 'fill-in-blank' && frame.type !== 'word-choice' && frame.type !== 'matching' && (
+      {frame.type !== 'fill-in-blank' && frame.type !== 'word-choice' && frame.type !== 'matching' && frame.type !== 'sorting' && frame.type !== 'categorization' && (
         <h3 className="text-xl font-semibold flex items-start gap-3">
           <Lightbulb className={`w-6 h-6 mt-1 shrink-0 ${highContrast ? 'text-yellow-400' : 'text-yellow-600'}`} />
           {frame.question}
@@ -105,6 +107,27 @@ export const ChallengeEngine = ({
         <MatchingChallenge 
           pairs={frame.matchingPairs || []}
           onCorrect={() => onTextSubmit(true, frame.correctFeedback || 'Associações perfeitas!')}
+          onWrong={(msg) => onTextSubmit(false, frame.wrongFeedback || msg)}
+          highContrast={highContrast}
+          disabled={showFeedback}
+        />
+      )}
+
+      {frame.type === 'sorting' && (
+        <SortingChallenge 
+          items={frame.sortingItems || []}
+          onCorrect={() => onTextSubmit(true, frame.correctFeedback || 'Ordem cronológica perfeita!')}
+          onWrong={(msg) => onTextSubmit(false, frame.wrongFeedback || msg)}
+          highContrast={highContrast}
+          disabled={showFeedback}
+        />
+      )}
+
+      {frame.type === 'categorization' && (
+        <CategorizationChallenge 
+          items={frame.categorizationItems || []}
+          categories={frame.categories || []}
+          onCorrect={() => onTextSubmit(true, frame.correctFeedback || 'Todos os conceitos identificados corretamente!')}
           onWrong={(msg) => onTextSubmit(false, frame.wrongFeedback || msg)}
           highContrast={highContrast}
           disabled={showFeedback}

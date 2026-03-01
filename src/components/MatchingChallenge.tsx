@@ -19,11 +19,13 @@ export const MatchingChallenge = ({ pairs, onCorrect, onWrong, highContrast, dis
   const [incorrectMatch, setIncorrectMatch] = useState<[string, string] | null>(null);
 
   useEffect(() => {
-    setLeftItems(pairs.map(p => p.left).sort(() => Math.random() - 0.5));
-    setRightItems(pairs.map(p => p.right).sort(() => Math.random() - 0.5));
-    setMatches({});
-    setSelectedLeft(null);
-  }, [pairs]);
+    if (!disabled) {
+      setLeftItems(pairs.map(p => p.left).sort(() => Math.random() - 0.5));
+      setRightItems(pairs.map(p => p.right).sort(() => Math.random() - 0.5));
+      setMatches({});
+      setSelectedLeft(null);
+    }
+  }, [pairs, disabled]);
 
   const handleLeftClick = (item: string) => {
     if (disabled || matches[item]) return;

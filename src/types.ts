@@ -1,4 +1,4 @@
-export type ChallengeType = 'multiple-choice' | 'true-false' | 'info' | 'fill-in-blank' | 'word-choice' | 'matching';
+export type ChallengeType = 'multiple-choice' | 'true-false' | 'info' | 'fill-in-blank' | 'word-choice' | 'matching' | 'sorting' | 'categorization';
 
 export interface Option {
   id: string;
@@ -16,6 +16,18 @@ export interface MatchingPair {
   id: string;
   left: string;
   right: string;
+}
+
+export interface SortingItem {
+  id: string;
+  text: string;
+  order: number;
+}
+
+export interface CategorizationItem {
+  id: string;
+  text: string;
+  category: string;
 }
 
 export interface LearningFrame {
@@ -37,10 +49,18 @@ export interface LearningFrame {
   correctChoice?: string;
   // For matching
   matchingPairs?: MatchingPair[];
+  // For sorting
+  sortingItems?: SortingItem[];
+  // For categorization
+  categorizationItems?: CategorizationItem[];
+  categories?: string[];
 }
 
 export interface AccessibilitySettings {
   highContrast: boolean;
   fontSize: number;
   isReading: boolean;
+  volume: number;
+  readingSpeed: number;
+  soundEffects: boolean;
 }

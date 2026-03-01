@@ -2,17 +2,18 @@ import confetti from 'canvas-confetti';
 import { GoogleGenAI, Modality } from "@google/genai";
 import { AnimatePresence, motion } from 'motion/react';
 import { History, Trophy, Zap } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 import { AccessibilityToolbar } from './components/AccessibilityToolbar';
 import { ChallengeEngine } from './components/ChallengeEngine';
 import { FeedbackDisplay } from './components/FeedbackDisplay';
 import { FrameRenderer } from './components/FrameRenderer';
 import { Glossary } from './components/Glossary';
-import { behaviorismContent, glossary } from './data/content';
-import { AccessibilitySettings, Option } from './types';
+import { getPersonalizedContent, glossary } from './data';
+import { AccessibilitySettings, LearningFrame, Option } from './types';
 
 export default function App() {
+  const [frames, setFrames] = useState<LearningFrame[]>([]);
   const [currentFrameIndex, setCurrentFrameIndex] = useState(0);
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
@@ -22,14 +23,60 @@ export default function App() {
   const [isFinished, setIsFinished] = useState(false);
   const [isGlossaryOpen, setIsGlossaryOpen] = useState(false);
   const [showReTeach, setShowReTeach] = useState(false);
+  const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(null);
+  const isReadingRef = useRef(false);
   
   const [accSettings, setAccSettings] = useState<AccessibilitySettings>({
     highContrast: false,
     fontSize: 1,
-    isReading: false
+    isReading: false,
+    volume: 1,
+    readingSpeed: 1,
+    soundEffects: true
   });
 
-  const currentFrame = behaviorismContent[currentFrameIndex];
+  const setIsReading = (val: boolean) => {
+    isReadingRef.current = val;
+    setAccSettings(s => ({ ...s, isReading: val }));
+  };
+
+  useEffect(() => {
+    // Initialize frames with a shuffle for personalization
+    setFrames(getPersonalizedContent(true));
+  }, []);
+
+  const currentFrame = frames[currentFrameIndex];
+
+  const playSoundEffect = (type: 'correct' | 'wrong') => {
+    if (!accSettings.soundEffects) return;
+    
+    try {
+      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+
+      gainNode.gain.value = accSettings.volume * 0.05;
+
+      if (type === 'correct') {
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(880, audioCtx.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(1320, audioCtx.currentTime + 0.1);
+      } else {
+        oscillator.type = 'square';
+        oscillator.frequency.setValueAtTime(150, audioCtx.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(70, audioCtx.currentTime + 0.2);
+      }
+
+      oscillator.start();
+      gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.3);
+      oscillator.stop(audioCtx.currentTime + 0.3);
+    } catch (e) {
+      console.error("AudioContext error:", e);
+    }
+  };
 
   const handleOptionSelect = (option: Option) => {
     setSelectedOptionId(option.id);
@@ -41,8 +88,10 @@ export default function App() {
       setScore(s => s + 10);
       triggerConfetti();
       setShowReTeach(false);
-    } else if (currentFrame.reTeachContent) {
-      setShowReTeach(true);
+      playSoundEffect('correct');
+    } else {
+      if (currentFrame.reTeachContent) setShowReTeach(true);
+      playSoundEffect('wrong');
     }
   };
 
@@ -56,8 +105,10 @@ export default function App() {
       setScore(s => s + 10);
       triggerConfetti();
       setShowReTeach(false);
-    } else if (currentFrame.reTeachContent) {
-      setShowReTeach(true);
+      playSoundEffect('correct');
+    } else {
+      if (currentFrame.reTeachContent) setShowReTeach(true);
+      playSoundEffect('wrong');
     }
   };
 
@@ -70,8 +121,10 @@ export default function App() {
       setScore(s => s + 10);
       triggerConfetti();
       setShowReTeach(false);
-    } else if (currentFrame.reTeachContent) {
-      setShowReTeach(true);
+      playSoundEffect('correct');
+    } else {
+      if (currentFrame.reTeachContent) setShowReTeach(true);
+      playSoundEffect('wrong');
     }
   };
 
@@ -84,8 +137,16 @@ export default function App() {
     });
   };
 
+  const handleRetry = () => {
+    setShowFeedback(false);
+    setSelectedOptionId(null);
+    setIsCorrect(false);
+    setFeedbackMessage('');
+    setShowReTeach(false);
+  };
+
   const nextFrame = () => {
-    if (currentFrameIndex < behaviorismContent.length - 1) {
+    if (currentFrameIndex < frames.length - 1) {
       setCurrentFrameIndex(i => i + 1);
       setSelectedOptionId(null);
       setShowFeedback(false);
@@ -97,13 +158,17 @@ export default function App() {
   };
 
   const readAloud = async () => {
-    if (accSettings.isReading) {
+    if (isReadingRef.current) {
       window.speechSynthesis.cancel();
-      setAccSettings(s => ({ ...s, isReading: false }));
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+      }
+      setIsReading(false);
       return;
     }
 
-    setAccSettings(s => ({ ...s, isReading: true }));
+    setIsReading(true);
     let textToRead = `${currentFrame.title}. ${currentFrame.content}. ${currentFrame.question || ''}`;
     
     if (showFeedback) {
@@ -128,6 +193,8 @@ export default function App() {
         },
       });
 
+      if (!isReadingRef.current) return;
+
       const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
       
       if (base64Audio) {
@@ -140,18 +207,25 @@ export default function App() {
         const blob = new Blob([byteArray], { type: 'audio/mpeg' });
         const url = URL.createObjectURL(blob);
         const audio = new Audio(url);
+        audio.volume = accSettings.volume;
+        audio.playbackRate = accSettings.readingSpeed;
+        setCurrentAudio(audio);
         
         audio.onended = () => {
-          setAccSettings(s => ({ ...s, isReading: false }));
+          setIsReading(false);
+          setCurrentAudio(null);
           URL.revokeObjectURL(url);
         };
 
         audio.onerror = () => {
           URL.revokeObjectURL(url);
+          setCurrentAudio(null);
           useWebSpeechFallback(textToRead);
         };
 
-        await audio.play();
+        if (isReadingRef.current) {
+          await audio.play();
+        }
       } else {
         useWebSpeechFallback(textToRead);
       }
@@ -164,12 +238,15 @@ export default function App() {
   const useWebSpeechFallback = (text: string) => {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'pt-BR';
-    utterance.onend = () => setAccSettings(s => ({ ...s, isReading: false }));
-    utterance.onerror = () => setAccSettings(s => ({ ...s, isReading: false }));
+    utterance.volume = accSettings.volume;
+    utterance.rate = accSettings.readingSpeed;
+    utterance.onend = () => setIsReading(false);
+    utterance.onerror = () => setIsReading(false);
     window.speechSynthesis.speak(utterance);
   };
 
   if (isFinished) {
+    const accuracy = frames.length > 0 ? Math.round((score / frames.length) * 100) : 0;
     return (
       <main 
         className={`min-h-screen flex items-center justify-center p-4 transition-colors ${accSettings.highContrast ? 'bg-black text-white' : 'bg-stone-100 text-stone-900'}`}
@@ -183,10 +260,18 @@ export default function App() {
           <Trophy className={`w-16 h-16 mx-auto mb-6 ${accSettings.highContrast ? 'text-yellow-400' : 'text-yellow-600'}`} />
           <h1 className="text-3xl font-display font-bold mb-2">Jornada Concluída!</h1>
           <p className={accSettings.highContrast ? 'text-white' : 'text-stone-600'}>Você dominou os fundamentos dos Capítulos 1 e 2 de Baum.</p>
-          <div className={`rounded-xl p-6 mb-8 mt-4 ${accSettings.highContrast ? 'bg-zinc-900 border-2 border-white' : 'bg-stone-50'}`}>
-            <p className={`text-sm uppercase tracking-widest mb-1 ${accSettings.highContrast ? 'text-yellow-400' : 'text-stone-400'}`}>Pontuação Final</p>
-            <p className="text-5xl font-mono font-bold">{score}</p>
+          
+          <div className="grid grid-cols-2 gap-4 mt-6 mb-8">
+            <div className={`rounded-xl p-4 ${accSettings.highContrast ? 'bg-zinc-900 border-2 border-white' : 'bg-stone-50'}`}>
+              <p className={`text-xs uppercase tracking-widest mb-1 ${accSettings.highContrast ? 'text-yellow-400' : 'text-stone-400'}`}>Pontuação</p>
+              <p className="text-3xl font-mono font-bold">{score}</p>
+            </div>
+            <div className={`rounded-xl p-4 ${accSettings.highContrast ? 'bg-zinc-900 border-2 border-white' : 'bg-stone-50'}`}>
+              <p className={`text-xs uppercase tracking-widest mb-1 ${accSettings.highContrast ? 'text-yellow-400' : 'text-stone-400'}`}>Precisão</p>
+              <p className="text-3xl font-mono font-bold">{accuracy}%</p>
+            </div>
           </div>
+
           <button 
             onClick={() => window.location.reload()}
             className={`w-full py-4 rounded-xl font-bold uppercase tracking-widest ${accSettings.highContrast ? 'bg-yellow-400 text-black hover:bg-yellow-300' : 'bg-stone-900 text-white hover:bg-stone-800'}`}
@@ -197,6 +282,8 @@ export default function App() {
       </main>
     );
   }
+
+  if (!currentFrame) return null;
 
   return (
     <main 
@@ -209,6 +296,7 @@ export default function App() {
         onFontSizeChange={(delta) => setAccSettings(s => ({ ...s, fontSize: Math.min(Math.max(s.fontSize + delta, 0.8), 1.5) }))}
         onReadAloud={readAloud}
         onOpenGlossary={() => setIsGlossaryOpen(true)}
+        onUpdateSettings={(newSettings) => setAccSettings(s => ({ ...s, ...newSettings }))}
       />
 
       <Glossary 
@@ -230,7 +318,7 @@ export default function App() {
         </div>
         <div className="text-right">
           <p className={`text-xs uppercase font-mono ${accSettings.highContrast ? 'text-stone-300' : 'text-stone-400'}`}>Progresso</p>
-          <p className="font-mono font-bold">{currentFrameIndex + 1} / {behaviorismContent.length}</p>
+          <p className="font-mono font-bold">{currentFrameIndex + 1} / {frames.length}</p>
         </div>
       </header>
 
@@ -272,6 +360,7 @@ export default function App() {
               isCorrect={isCorrect}
               message={feedbackMessage}
               onNext={nextFrame}
+              onRetry={handleRetry}
               highContrast={accSettings.highContrast}
               isInfo={currentFrame.type === 'info'}
               reTeachContent={currentFrame.reTeachContent}

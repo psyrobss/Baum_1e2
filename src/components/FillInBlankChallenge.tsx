@@ -16,9 +16,11 @@ export const FillInBlankChallenge = ({ question, correctAnswer, choices, onCorre
   const [availableChoices, setAvailableChoices] = useState<string[]>(choices);
 
   useEffect(() => {
-    setAvailableChoices(choices);
-    setSelected(null);
-  }, [choices]);
+    if (!disabled) {
+      setAvailableChoices(choices);
+      setSelected(null);
+    }
+  }, [choices, disabled]);
 
   const handleChoice = (choice: string) => {
     if (disabled) return;
