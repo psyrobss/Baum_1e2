@@ -29,10 +29,10 @@ export const chapter2Content: LearningFrame[] = [
     title: "Schrödinger e o Substrato Supérfluo",
     chapter: 2,
     content: "O físico Schrödinger argumentou que se podemos pensar de forma natural sobre os seres vivos através da experiência, postular um 'mundo objetivo' por trás é desnecessário.",
-    type: 'fill-in-blank',
-    question: "Schrödinger chamou o mundo objetivo imaginado de '______ material'.",
-    blankAnswer: "substrato",
+    type: 'word-choice',
+    textWithBlanks: "Schrödinger chamou o mundo objetivo imaginado de [CHOICE] material.",
     choices: ["substrato", "átomo", "espírito"],
+    correctChoice: "substrato",
     correctFeedback: "Perfeito. Ele considerava esse substrato 'total e completamente supérfluo'.",
     wrongFeedback: "A palavra é 'substrato'. Refere-se à base material que os realistas supõem existir."
   },
@@ -81,10 +81,10 @@ export const chapter2Content: LearningFrame[] = [
     title: "O Aprendiz de Oleiro",
     chapter: 2,
     content: "Mach usa o exemplo do oleiro para mostrar que conceitos (argila, queima, fornos) permitem transmitir conhecimentos acumulados sem que cada geração tenha que 'reinventar a roda'.",
-    type: 'fill-in-blank',
-    question: "A ciência se origina da necessidade que as pessoas têm de se ______ de maneira eficiente.",
-    blankAnswer: "comunicar",
+    type: 'word-choice',
+    textWithBlanks: "A ciência se origina da necessidade que as pessoas têm de se [CHOICE] de maneira eficiente.",
     choices: ["comunicar", "isolar", "divertir"],
+    correctChoice: "comunicar",
     correctFeedback: "Isso! A economia de pensamento é, no fundo, economia de comunicação.",
     wrongFeedback: "A resposta é 'comunicar'. A ciência é uma linguagem que economiza esforço social."
   },
@@ -128,10 +128,10 @@ export const chapter2Content: LearningFrame[] = [
     title: "O Exemplo do Homem Correndo",
     chapter: 2,
     content: "Um homem corre na rua. O realista descreve os músculos. O pragmatista pergunta: ele está fugindo da polícia ou treinando para as Olimpíadas?",
-    type: 'fill-in-blank',
-    question: "Definições coerentes de atividades devem incluir a ______ que elas cumprem.",
-    blankAnswer: "função",
+    type: 'word-choice',
+    textWithBlanks: "Definições coerentes de atividades devem incluir a [CHOICE] que elas cumprem.",
     choices: ["forma", "função", "velocidade"],
+    correctChoice: "função",
     reTeachContent: "Para o behaviorista radical, as razões para um comportamento (seu propósito) fazem parte do próprio comportamento.",
     correctFeedback: "Perfeito! A visão funcional é o que diferencia o behaviorismo radical do puramente mecânico.",
     wrongFeedback: "A resposta é 'função'. O behaviorismo radical é funcionalista, não apenas topográfico."
@@ -187,5 +187,37 @@ export const chapter2Content: LearningFrame[] = [
     ],
     correctFeedback: "Domínio total das bases filosóficas! Você sabe exatamente como cada visão enxerga a ciência.",
     reTeachContent: "O Realismo foca na correspondência com um mundo externo objetivo, enquanto o Pragmatismo foca na utilidade e economia das descrições científicas."
+  },
+  {
+    id: 32,
+    title: "Pragmatismo e Ação (Texto Original)",
+    chapter: 2,
+    content: "Complete o texto de Baum sobre a essência do pragmatismo.",
+    type: 'interactive-paragraph',
+    parts: [
+      { id: 'p3_1', type: 'text', content: "A noção fundamental no pragmatismo é a de que o poder da investigação científica não reside tanto em descobrirmos a " },
+      { id: 'p3_2', type: 'choice', options: ["verdade", "origem", "causa"], answer: "verdade" },
+      { id: 'p3_3', type: 'text', content: " sobre como o universo objetivo funciona, mas no que a investigação científica nos permite " },
+      { id: 'p3_4', type: 'choice', options: ["fazer", "observar"], answer: "fazer" },
+      { id: 'p3_5', type: 'text', content: " (daí o nome pragmatismo, da mesma raiz que 'prática')." }
+    ],
+    correctFeedback: "Exato! O pragmatismo foca na eficácia da ação científica."
+  },
+  {
+    id: 33,
+    title: "Realismo vs Pragmatismo (Texto Original)",
+    chapter: 2,
+    content: "Diferencie as duas visões usando as palavras do autor.",
+    type: 'interactive-paragraph',
+    parts: [
+      { id: 'p4_1', type: 'text', content: "O " },
+      { id: 'p4_2', type: 'choice', options: ["realismo", "pragmatismo"], answer: "realismo" },
+      { id: 'p4_3', type: 'text', content: " sustenta que um mundo real existe fora de nós e que esse mundo real exterior dá origem às experiências internas... O " },
+      { id: 'p4_4', type: 'choice', options: ["realismo", "pragmatismo"], answer: "pragmatismo" },
+      { id: 'p4_5', type: 'text', content: ", ao contrário, não faz qualquer suposição de um mundo real indiretamente conhecido para além da nossa experiência. Centra-se, em vez disso, na tarefa de dar " },
+      { id: 'p4_6', type: 'choice', options: ["sentido", "valor", "forma"], answer: "sentido" },
+      { id: 'p4_7', type: 'text', content: " às nossas experiências." }
+    ],
+    correctFeedback: "Excelente compreensão do texto original!"
   }
 ];

@@ -1,4 +1,12 @@
-export type ChallengeType = 'multiple-choice' | 'true-false' | 'info' | 'fill-in-blank' | 'word-choice' | 'matching' | 'sorting' | 'categorization';
+export type ChallengeType = 'multiple-choice' | 'true-false' | 'info' | 'fill-in-blank' | 'word-choice' | 'matching' | 'sorting' | 'categorization' | 'interactive-paragraph';
+
+export interface InteractivePart {
+  type: 'text' | 'blank' | 'choice';
+  content?: string; // For text
+  answer?: string; // For blank/choice
+  options?: string[]; // For choice
+  id: string;
+}
 
 export interface Option {
   id: string;
@@ -54,6 +62,8 @@ export interface LearningFrame {
   // For categorization
   categorizationItems?: CategorizationItem[];
   categories?: string[];
+  // For interactive-paragraph
+  parts?: InteractivePart[];
 }
 
 export interface AccessibilitySettings {

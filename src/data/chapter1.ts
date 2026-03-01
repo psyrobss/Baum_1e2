@@ -29,10 +29,10 @@ export const chapter1Content: LearningFrame[] = [
     title: "Psicologia Objetiva: Donders",
     chapter: 1,
     content: "F. C. Donders tentou medir processos mentais objetivamente através do 'tempo de reação'. Ele subtraía o tempo de uma reação simples do tempo de uma reação de escolha.",
-    type: 'fill-in-blank',
-    question: "Donders acreditava que era possível medir objetivamente o processo mental de escolha através de uma medida ______.",
-    blankAnswer: "objetiva",
+    type: 'word-choice',
+    textWithBlanks: "Donders acreditava que era possível medir objetivamente o processo mental de escolha através de uma medida [CHOICE].",
     choices: ["subjetiva", "objetiva", "teológica"],
+    correctChoice: "objetiva",
     reTeachContent: "Donders foi um pioneiro em buscar medidas físicas (tempo) para o que antes era considerado puramente mental.",
     correctFeedback: "Perfeito! Ele buscava transformar o subjetivo em algo mensurável.",
     wrongFeedback: "A palavra correta é 'objetiva'. Ele queria fugir da subjetividade da introspecção."
@@ -70,10 +70,10 @@ export const chapter1Content: LearningFrame[] = [
     title: "Psicologia Comparativa e Romanes",
     chapter: 1,
     content: "George Romanes tentou observar as origens dos traços mentais em outras espécies, mas caiu na armadilha de 'humanizar' os animais.",
-    type: 'fill-in-blank',
-    question: "O termo para a atribuição de sentimentos humanos a animais (ex: dizer que um rato sente 'confusão') é ______.",
-    blankAnswer: "antropomorfismo",
+    type: 'word-choice',
+    textWithBlanks: "O termo para a atribuição de sentimentos humanos a animais (ex: dizer que um rato sente 'confusão') é [CHOICE].",
     choices: ["antropomorfismo", "determinismo", "realismo"],
+    correctChoice: "antropomorfismo",
     correctFeedback: "Exato. Watson criticou duramente essa prática por ser puramente especulativa.",
     wrongFeedback: "A resposta é 'antropomorfismo'. É a 'humanização da fera'."
   },
@@ -131,10 +131,10 @@ export const chapter1Content: LearningFrame[] = [
     title: "Pavlov e a Psicologia Objetiva",
     chapter: 1,
     content: "Pavlov contribuiu para a psicologia objetiva ao estudar a aprendizagem através da associação, medindo a transferência de reflexos simples para novos sinais no laboratório.",
-    type: 'fill-in-blank',
-    question: "Pavlov estudou a aprendizagem medindo um simples ______ de transferência para novos sinais.",
-    blankAnswer: "reflexo",
+    type: 'word-choice',
+    textWithBlanks: "Pavlov estudou a aprendizagem medindo um simples [CHOICE] de transferência para novos sinais.",
     choices: ["reflexo", "instinto", "pensamento"],
+    correctChoice: "reflexo",
     correctFeedback: "Exato. O reflexo condicional foi a base para uma psicologia baseada em medidas físicas.",
     wrongFeedback: "A resposta é 'reflexo'. Pavlov focava em respostas fisiológicas eliciadas por estímulos."
   },
@@ -152,5 +152,38 @@ export const chapter1Content: LearningFrame[] = [
     ],
     correctFeedback: "Excelente memória histórica! Você traçou o caminho exato da objetividade.",
     reTeachContent: "A psicofísica de Fechner abriu caminho para as medidas de tempo de Donders, seguidas pelo rigor de Ebbinghaus e, finalmente, o manifesto de Watson em 1913."
+  },
+  {
+    id: 30,
+    title: "A Ideia Central (Texto Original)",
+    chapter: 1,
+    content: "Complete o parágrafo fundamental de Baum sobre a definição de behaviorismo.",
+    type: 'interactive-paragraph',
+    parts: [
+      { id: 'p1_1', type: 'text', content: "A ideia central no behaviorismo pode ser formulada de maneira simples: uma " },
+      { id: 'p1_2', type: 'choice', options: ["ciência", "arte", "técnica"], answer: "ciência" },
+      { id: 'p1_3', type: 'text', content: " do comportamento é " },
+      { id: 'p1_4', type: 'choice', options: ["possível", "impossível"], answer: "possível" },
+      { id: 'p1_5', type: 'text', content: ". Os behavioristas têm opiniões diversas sobre o que essa proposição significa... mas todos concordam que pode haver uma ciência do " },
+      { id: 'p1_6', type: 'choice', options: ["comportamento", "pensamento", "espírito"], answer: "comportamento" },
+      { id: 'p1_7', type: 'text', content: "." }
+    ],
+    correctFeedback: "Perfeito! Você captou a essência do manifesto behaviorista.",
+    wrongFeedback: "Verifique os termos: o behaviorismo afirma que a ciência é possível e seu objeto é o comportamento."
+  },
+  {
+    id: 31,
+    title: "Behaviorismo vs Ciência (Texto Original)",
+    chapter: 1,
+    content: "Diferencie o behaviorismo da análise do comportamento usando o texto de Baum.",
+    type: 'interactive-paragraph',
+    parts: [
+      { id: 'p2_1', type: 'text', content: "Uma vez que o behaviorismo é um conjunto de ideas sobre essa ciência chamada " },
+      { id: 'p2_2', type: 'choice', options: ["análise do comportamento", "psicologia cognitiva", "neurociência"], answer: "análise do comportamento" },
+      { id: 'p2_3', type: 'text', content: ", não a ciência em si, o behaviorismo propriamente dito não é ciência, mas " },
+      { id: 'p2_4', type: 'choice', options: ["filosofia da ciência", "biologia evolutiva"], answer: "filosofia da ciência" },
+      { id: 'p2_5', type: 'text', content: "." }
+    ],
+    correctFeedback: "Excelente distinção! O behaviorismo é a base reflexiva, enquanto a análise é a prática científica."
   }
 ];

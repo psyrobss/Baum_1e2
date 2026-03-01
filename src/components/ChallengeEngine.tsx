@@ -5,6 +5,7 @@ import { WordChoiceChallenge } from './WordChoiceChallenge';
 import { MatchingChallenge } from './MatchingChallenge';
 import { SortingChallenge } from './SortingChallenge';
 import { CategorizationChallenge } from './CategorizationChallenge';
+import { InteractiveParagraphChallenge } from './InteractiveParagraphChallenge';
 
 interface Props {
   frame: LearningFrame;
@@ -131,6 +132,15 @@ export const ChallengeEngine = ({
           onWrong={(msg) => onTextSubmit(false, frame.wrongFeedback || msg)}
           highContrast={highContrast}
           disabled={showFeedback}
+        />
+      )}
+
+      {frame.type === 'interactive-paragraph' && (
+        <InteractiveParagraphChallenge
+          frame={frame}
+          onComplete={onTextSubmit}
+          disabled={showFeedback}
+          highContrast={highContrast}
         />
       )}
     </div>
